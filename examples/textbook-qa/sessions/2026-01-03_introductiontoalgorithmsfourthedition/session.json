@@ -1,0 +1,38 @@
+{
+  "session_id": "20260103_202008",
+  "created_at": "2026-01-03T20:20:08.254467",
+  "book_title": "Introductiontoalgorithmsfourthedition",
+  "book_filename": "IntroductiontoAlgorithmsFourthEdition.pdf",
+  "book_pages": 1677,
+  "book_words": 463574,
+  "model": "claude-sonnet-4-5-20250929",
+  "budget_limit": 1.0,
+  "max_iterations": 10,
+  "entries": [
+    {
+      "question_number": 20,
+      "question": "what is dynamic programming",
+      "answer": "## \ud83d\udcd6 What is Dynamic Programming?\n\n### Verbatim Definition from Textbook\n\n> \"Dynamic programming, like the divide-and-conquer method, solves problems by combining the solutions to subproblems. ('Programming' in this context refers to a tabular method, not to writing computer code.) As we saw in Chapters 2 and 4, divide-and-conquer algorithms partition the problem into disjoint subproblems, solve the subproblems recursively, and then combine their solutions to solve the original problem. In contrast, dynamic programming applies when the subproblems overlap\u2014that is, when subproblems share subsubproblems. In this context, a divide-and-conquer algorithm does more work than necessary, repeatedly solving the common subsubproblems. A dynamic-programming algorithm solves each subsubproblem just once and then saves its answer in a table, thereby avoiding the work of recomputing the answer every time it solves each subsubproblem.\"\n>\n> \u2014 **Page 481**, Chapter 14: Dynamic Programming\n\n\ud83d\udcc4 [View Page 481 in PDF](file:///Users/chen/Projects/rlm/examples/textbook-qa/books/IntroductiontoAlgorithmsFourthEdition.pdf#page=481)\n\n### The Two Key Properties\n\nDynamic programming applies to problems that have these two properties:\n\n**1. Optimal Substructure**\n\n> \"A problem exhibits optimal substructure if an optimal solution to the problem contains within it optimal solutions to subproblems.\"\n>\n> \u2014 **Page 498**\n\n\ud83d\udcc4 [View Page 498 in PDF](file:///Users/chen/Projects/rlm/examples/textbook-qa/books/IntroductiontoAlgorithmsFourthEdition.pdf#page=498)\n\n**2. Overlapping Subproblems**\n\n> \"When a recursive algorithm revisits the same problem repeatedly, we say that the optimization problem has overlapping subproblems.\"\n>\n> \u2014 **Page 501**\n\n\ud83d\udcc4 [View Page 501 in PDF](file:///Users/chen/Projects/rlm/examples/textbook-qa/books/IntroductiontoAlgorithmsFourthEdition.pdf#page=501)\n\n### Classic Example: Rod Cutting Problem\n\n> \"The problem is to determine the maximum revenue r\u2099 obtainable by cutting up the rod and selling the pieces.\"\n>\n> \u2014 **Page 481**\n\nThe rod-cutting problem illustrates how dynamic programming works:\n- Given a rod of length n and a price table for different lengths\n- Find the optimal way to cut the rod to maximize revenue\n- Subproblems overlap because cutting decisions reuse solutions for shorter lengths\n\n\ud83d\udcc4 [View Rod-Cutting Example on Page 481](file:///Users/chen/Projects/rlm/examples/textbook-qa/books/IntroductiontoAlgorithmsFourthEdition.pdf#page=481)\n\n---\n\n## \ud83e\udde0 Simple Explanation\n\n**In plain English:** Dynamic programming is a method for solving complex problems by breaking them down into simpler subproblems, solving each subproblem just once, and storing the results to avoid redundant calculations.\n\n**Key points:**\n1. **Breaks down problems** into smaller, overlapping subproblems\n2. **Saves solutions** in a table (memoization) to avoid recomputation\n3. **Builds up solutions** from smaller subproblems to solve the original problem\n4. **Applies when** subproblems overlap and exhibit optimal substructure\n\n**Analogy:** Think of dynamic programming like climbing a ladder. Instead of jumping from the ground to the top (which is hard), you climb one step at a time, remembering which steps you've already been on. Each step (subproblem) builds on the previous ones, and you never have to re-climb a step you've already done.\n\n**When to use it:**\n- When a problem can be broken into overlapping subproblems\n- When the optimal solution contains optimal solutions to subproblems\n- When naive recursion would repeatedly solve the same subproblems\n\n---\n\n## \u2705 Verification Checklist\n\n| Source | Page | First 5 Words | Last 5 Words | Link |\n|--------|------|---------------|--------------|------|\n| Main Definition | 481 | \"Dynamic programming, like the divide-and-conquer\" | \"it solves each subsubproblem\" | [View](file:///Users/chen/Projects/rlm/examples/textbook-qa/books/IntroductiontoAlgorithmsFourthEdition.pdf#page=481) |\n| Optimal Substructure | 498 | \"A problem exhibits optimal substructure\" | \"optimal solutions to subproblems\" | [View](file:///Users/chen/Projects/rlm/examples/textbook-qa/books/IntroductiontoAlgorithmsFourthEdition.pdf#page=498) |\n| Overlapping Subproblems | 501 | \"When a recursive algorithm revisits\" | \"has overlapping subproblems\" | [View](file:///Users/chen/Projects/rlm/examples/textbook-qa/books/IntroductiontoAlgorithmsFourthEdition.pdf#page=501) |\n| Rod-Cutting Example | 481 | \"The problem is to determine\" | \"cutting up the rod\" | [View](file:///Users/chen/Projects/rlm/examples/textbook-qa/books/IntroductiontoAlgorithmsFourthEdition.pdf#page=481) |\n\n---\n\n## \ud83d\udcda Additional Resources in This Textbook\n\nThe complete Chapter 14 (pages 479-519) covers:\n- Rod-cutting problem (detailed example)\n- Matrix-chain multiplication\n- Elements of dynamic programming (optimal substructure, overlapping subproblems)\n- Longest common subsequence\n- Optimal binary search trees\n\n\ud83d\udcc4 [View Full Chapter 14](file:///Users/chen/Projects/rlm/examples/textbook-qa/books/IntroductiontoAlgorithmsFourthEdition.pdf#page=479)\n\n---\n\n**Source:** *Introduction to Algorithms, Fourth Edition* by Cormen, Leiserson, Rivest, and Stein\n",
+      "timestamp": "2026-01-03T20:23:16.260837",
+      "iterations_used": 5,
+      "max_iterations": 10,
+      "api_calls": 9,
+      "root_calls": 5,
+      "sub_calls": 4,
+      "input_tokens": 55853,
+      "output_tokens": 11457,
+      "total_tokens": 67310,
+      "cost_usd": 0.33941400000000005,
+      "extracted_concepts": [
+        "Dynamic Programming, Like The Divide-And-Conquer Method, Solves Problems By Combining The Solutions To Subproblems. ('Programming' In This Context Refers To A Tabular Method, Not To Writing Computer Code.) As We Saw In Chapters 2 And 4, Divide-And-Conquer Algorithms Partition The Problem Into Disjoint Subproblems, Solve The Subproblems Recursively, And Then Combine Their Solutions To Solve The Original Problem. In Contrast, Dynamic Programming Applies When The Subproblems Overlap\u2014That Is, When Subproblems Share Subsubproblems. In This Context, A Divide-And-Conquer Algorithm Does More Work Than Necessary, Repeatedly Solving The Common Subsubproblems. A Dynamic-Programming Algorithm Solves Each Subsubproblem Just Once And Then Saves Its Answer In A Table, Thereby Avoiding The Work Of Recomputing The Answer Every Time It Solves Each Subsubproblem.",
+        "A Problem Exhibits Optimal Substructure If An Optimal Solution To The Problem Contains Within It Optimal Solutions To Subproblems.",
+        "When A Recursive Algorithm Revisits The Same Problem Repeatedly, We Say That The Optimization Problem Has Overlapping Subproblems.",
+        "The Problem Is To Determine The Maximum Revenue R\u2099 Obtainable By Cutting Up The Rod And Selling The Pieces.",
+        "Dynamic Programming, Like The Divide-And-Conquer",
+        "Subsubproblems",
+        "Method For"
+      ]
+    }
+  ],
+  "total_cost": 0.33941400000000005
+}

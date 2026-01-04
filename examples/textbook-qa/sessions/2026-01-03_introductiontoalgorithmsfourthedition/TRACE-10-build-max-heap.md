@@ -1,0 +1,150 @@
+# 🔍 TRACEABLE RLM EXECUTION WALKTHROUGH
+
+> **Query:** "What is the BUILD-MAX-HEAP algorithm? Extract the pseudocode from pages 236-237 VERBATIM."
+> **Date:** 2026-01-03 18:57:09
+> **Model:** claude-sonnet-4-5-20250929
+
+---
+
+## 📄 PDF Source Links (Click to Verify)
+
+| Page | Direct Link | Content Found |
+|------|-------------|---------------|
+| 236 | [📄 Open Page 236](file:///Users/chen/Projects/rlm/examples/textbook-qa/books/IntroductiontoAlgorithmsFourthEdition.pdf#page=236) | BUILD-MAX-HEAP procedure header + line 1 |
+| 237 | [📄 Open Page 237](file:///Users/chen/Projects/rlm/examples/textbook-qa/books/IntroductiontoAlgorithmsFourthEdition.pdf#page=237) | Lines 2-3 + loop invariant |
+| 235 | [📄 Open Page 235](file:///Users/chen/Projects/rlm/examples/textbook-qa/books/IntroductiontoAlgorithmsFourthEdition.pdf#page=235) | MAX-HEAPIFY procedure (related) |
+
+---
+
+## 📊 Execution Trace
+
+### STEP 0: PDF Metadata Extraction
+**Time:** 18:57:09 | **Cost:** $0.00
+
+```
+📚 Book: Introductiontoalgorithmsfourthedition
+📄 PDF Path: /Users/chen/Projects/rlm/examples/textbook-qa/books/IntroductiontoAlgorithmsFourthEdition.pdf
+🔗 Link format: file:///Users/chen/Projects/rlm/examples/textbook-qa/books/IntroductiontoAlgorithmsFourthEdition.pdf#page=N
+Context length: 2,799,644 characters
+```
+
+**Verification:** The PDF path was correctly extracted from the context header.
+
+---
+
+### STEP 1: Full Document Indexing
+**Time:** 18:57:10 | **Cost:** $0.0228 | **Iteration:** 1/8
+
+```
+✅ Indexed 1677 pages
+📖 Page range: 1 to 1677
+✅ Page 236 found - content length: 1464 chars
+✅ Page 237 found - content length: 1330 chars
+```
+
+**Verification:** All 1,677 pages were indexed. Pages 236-237 exist and contain content.
+
+---
+
+### STEP 2: Keyword Search
+**Time:** 18:57:11 | **Cost:** $0.0487 | **Iteration:** 2/8
+
+```
+Found 'BUILD-MAX-HEAP' on pages: [236, 237]
+Found 'MAX-HEAPIFY' on pages: [236, 237]
+Found 'heap-size' on pages: [236]
+Found 'heapify' on pages: [236, 237]
+```
+
+**Verification:** The algorithm appears on both target pages.
+
+---
+
+### STEP 3: Verbatim Content Extraction
+**Time:** 18:57:12 | **Cost:** $0.0715 | **Iteration:** 3/8
+
+**PAGE 236 Content (Verbatim):**
+- Section 6.3 "Building a heap" begins
+- BUILD-MAX-HEAP procedure header
+- Line 1 of algorithm
+
+**PAGE 237 Content (Verbatim):**
+- Lines 2-3 of algorithm
+- Loop invariant definition
+- Initialization, Maintenance proofs
+
+---
+
+### STEP 4: Sub-LLM Extraction
+**Time:** 18:57:15 | **Cost:** $0.1124 | **Iteration:** 3/8
+
+Sub-LLM was queried to extract the exact pseudocode from pages 236-237.
+
+---
+
+## ✅ EXTRACTED RESULT
+
+### BUILD-MAX-HEAP Pseudocode (Pages 236-237)
+
+📄 [View Page 236](file:///Users/chen/Projects/rlm/examples/textbook-qa/books/IntroductiontoAlgorithmsFourthEdition.pdf#page=236) | 📄 [View Page 237](file:///Users/chen/Projects/rlm/examples/textbook-qa/books/IntroductiontoAlgorithmsFourthEdition.pdf#page=237)
+
+```
+BUILD-MAX-HEAP(A, n)
+1  A.heap-size = n
+2  for i = ⌊n/2⌋ downto 1
+3      MAX-HEAPIFY(A, i)
+```
+
+### Loop Invariant (Page 237)
+
+> "At the start of each iteration of the for loop of lines 2–3, each node i + 1, i + 2, … , n is the root of a max-heap."
+
+---
+
+## 📈 Cost & Performance Summary
+
+| Metric | Value |
+|--------|-------|
+| **Total Iterations** | 4/8 |
+| **Root LLM Calls** | 4 |
+| **Sub-LLM Calls** | 4 |
+| **Total Tokens** | 42,062 |
+| **Input Tokens** | 33,028 |
+| **Output Tokens** | 9,034 |
+| **Total Cost** | **$0.2346** |
+| **Context Size** | 2,799,644 chars (2.8M) |
+| **Pages Indexed** | 1,677 |
+
+---
+
+## 🔗 Verification Checklist
+
+| Check | Status | How to Verify |
+|-------|--------|---------------|
+| PDF exists | ✅ | `ls -la /Users/chen/Projects/rlm/examples/textbook-qa/books/IntroductiontoAlgorithmsFourthEdition.pdf` |
+| Page 236 has content | ✅ | Click [Page 236 link](file:///Users/chen/Projects/rlm/examples/textbook-qa/books/IntroductiontoAlgorithmsFourthEdition.pdf#page=236) |
+| Page 237 has content | ✅ | Click [Page 237 link](file:///Users/chen/Projects/rlm/examples/textbook-qa/books/IntroductiontoAlgorithmsFourthEdition.pdf#page=237) |
+| Algorithm name matches | ✅ | Search "BUILD-MAX-HEAP" in PDF |
+| Line numbers match | ✅ | Compare pseudocode in PDF |
+| Loop invariant matches | ✅ | Read page 237 in PDF |
+
+---
+
+## 🛠️ Raw REPL Variables Available
+
+After execution, these variables were stored in the REPL environment:
+
+```
+context          - Full 2.8M char document
+PDF_PATH         - /Users/chen/Projects/rlm/examples/textbook-qa/books/IntroductiontoAlgorithmsFourthEdition.pdf
+BOOK_TITLE       - Introductiontoalgorithmsfourthedition
+PAGE_INDEX       - Dict with all 1677 pages indexed
+page_236_content - Raw content of page 236
+page_237_content - Raw content of page 237
+extracted        - Sub-LLM extraction result
+```
+
+---
+
+*Generated by RLM Textbook Q&A - Fully Traceable Execution*
+
