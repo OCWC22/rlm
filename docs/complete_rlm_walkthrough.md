@@ -15,6 +15,7 @@ This document provides a comprehensive, line-by-line walkthrough of the Recursiv
 5. [Data Flow & Execution](#5-data-flow--execution)
 6. [Key Algorithms & Patterns](#6-key-algorithms--patterns)
 7. [Practical Usage Examples](#7-practical-usage-examples)
+8. [Environment Setup](#8-environment-setup)
 
 ---
 
@@ -665,47 +666,109 @@ class REPLEnv:
 
 #### 4.4.4 Safe Built-ins (Security Sandbox)
 
-The REPL environment restricts what Python functions are available:
+The REPL environment restricts what Python functions are available. Here is the **complete list**:
 
 ```python
 self.globals = {
     '__builtins__': {
-        # ALLOWED - Safe functions
-        'print': print, 'len': len, 'str': str, 'int': int, 'float': float,
-        'list': list, 'dict': dict, 'set': set, 'tuple': tuple, 'bool': bool,
-        'type': type, 'isinstance': isinstance, 'enumerate': enumerate,
-        'zip': zip, 'map': map, 'filter': filter, 'sorted': sorted,
-        'min': min, 'max': max, 'sum': sum, 'abs': abs, 'round': round,
-        # ... many more safe built-ins ...
+        # ═══════════════════════════════════════════════════════════════
+        # CORE TYPE CONSTRUCTORS & CONVERSIONS
+        # ═══════════════════════════════════════════════════════════════
+        'str': str, 'int': int, 'float': float, 'bool': bool,
+        'list': list, 'dict': dict, 'set': set, 'tuple': tuple,
+        'bytes': bytes, 'bytearray': bytearray, 'memoryview': memoryview,
+        'complex': complex, 'object': object,
         
-        # ALLOWED - File access (needed for context loading)
+        # ═══════════════════════════════════════════════════════════════
+        # SEQUENCE & ITERATION FUNCTIONS
+        # ═══════════════════════════════════════════════════════════════
+        'len': len, 'range': range, 'enumerate': enumerate,
+        'zip': zip, 'map': map, 'filter': filter, 'sorted': sorted,
+        'reversed': reversed, 'slice': slice, 'iter': iter, 'next': next,
+        'min': min, 'max': max, 'sum': sum, 'any': any, 'all': all,
+        
+        # ═══════════════════════════════════════════════════════════════
+        # MATH & NUMERIC FUNCTIONS
+        # ═══════════════════════════════════════════════════════════════
+        'abs': abs, 'round': round, 'pow': pow, 'divmod': divmod,
+        
+        # ═══════════════════════════════════════════════════════════════
+        # STRING & CHARACTER FUNCTIONS
+        # ═══════════════════════════════════════════════════════════════
+        'chr': chr, 'ord': ord, 'hex': hex, 'bin': bin, 'oct': oct,
+        'repr': repr, 'ascii': ascii, 'format': format, 'print': print,
+        
+        # ═══════════════════════════════════════════════════════════════
+        # INTROSPECTION & TYPE CHECKING
+        # ═══════════════════════════════════════════════════════════════
+        'type': type, 'isinstance': isinstance, 'issubclass': issubclass,
+        'hasattr': hasattr, 'getattr': getattr, 'setattr': setattr, 
+        'delattr': delattr, 'dir': dir, 'vars': vars,
+        'hash': hash, 'id': id, 'callable': callable,
+        
+        # ═══════════════════════════════════════════════════════════════
+        # OOP SUPPORT
+        # ═══════════════════════════════════════════════════════════════
+        'super': super, 'property': property,
+        'staticmethod': staticmethod, 'classmethod': classmethod,
+        
+        # ═══════════════════════════════════════════════════════════════
+        # FILE & IMPORT ACCESS (Required for context loading)
+        # ═══════════════════════════════════════════════════════════════
         '__import__': __import__,
         'open': open,
         
-        # BLOCKED - Dangerous functions
-        'input': None,      # Block interactive input
-        'eval': None,       # Block dynamic code evaluation
-        'exec': None,       # Block dynamic code execution
-        'compile': None,    # Block code compilation
-        'globals': None,    # Block access to global namespace
-        'locals': None,     # Block access to local namespace
+        # ═══════════════════════════════════════════════════════════════
+        # EXCEPTION CLASSES (For error handling in REPL code)
+        # ═══════════════════════════════════════════════════════════════
+        'BaseException': BaseException, 'Exception': Exception,
+        'ValueError': ValueError, 'TypeError': TypeError,
+        'KeyError': KeyError, 'IndexError': IndexError,
+        'AttributeError': AttributeError, 'NameError': NameError,
+        'FileNotFoundError': FileNotFoundError, 
+        'OSError': OSError, 'IOError': IOError,
+        'RuntimeError': RuntimeError, 'ImportError': ImportError,
+        'StopIteration': StopIteration, 'GeneratorExit': GeneratorExit,
+        'SystemExit': SystemExit, 'KeyboardInterrupt': KeyboardInterrupt,
+        'ArithmeticError': ArithmeticError, 'LookupError': LookupError,
+        'EnvironmentError': EnvironmentError, 'AssertionError': AssertionError,
+        'NotImplementedError': NotImplementedError, 'UnicodeError': UnicodeError,
+        
+        # ═══════════════════════════════════════════════════════════════
+        # WARNING CLASSES
+        # ═══════════════════════════════════════════════════════════════
+        'Warning': Warning, 'UserWarning': UserWarning,
+        'DeprecationWarning': DeprecationWarning,
+        'PendingDeprecationWarning': PendingDeprecationWarning,
+        'SyntaxWarning': SyntaxWarning, 'RuntimeWarning': RuntimeWarning,
+        'FutureWarning': FutureWarning, 'ImportWarning': ImportWarning,
+        'UnicodeWarning': UnicodeWarning, 'BytesWarning': BytesWarning,
+        'ResourceWarning': ResourceWarning,
+
+        # ═══════════════════════════════════════════════════════════════
+        # BLOCKED - DANGEROUS FUNCTIONS (Set to None)
+        # ═══════════════════════════════════════════════════════════════
+        'input': None,      # Would hang waiting for user input
+        'eval': None,       # Could execute arbitrary code
+        'exec': None,       # Could execute arbitrary code
+        'compile': None,    # Could compile malicious code
+        'globals': None,    # Could access internal state
+        'locals': None,     # Could access internal state
     }
 }
 ```
 
-**Security Considerations:**
+**Security Analysis:**
 
-| Allowed | Reason |
-|---------|--------|
-| `open`, `__import__` | Needed to read context files and import libraries |
-| `print` | Required for REPL output |
-| Math/string functions | Safe and useful for data processing |
-
-| Blocked | Reason |
-|---------|--------|
-| `eval`, `exec` | Could execute arbitrary code outside sandbox |
-| `input` | Would hang waiting for user input |
-| `globals`, `locals` | Could access internal state |
+| Category | Functions | Reason |
+|----------|-----------|--------|
+| **Allowed: I/O** | `open`, `__import__`, `print` | Required for context loading and REPL output |
+| **Allowed: Data Processing** | `str`, `int`, `list`, `dict`, `len`, etc. | Safe, essential for data manipulation |
+| **Allowed: Iteration** | `range`, `enumerate`, `zip`, `map`, `filter` | Safe, commonly needed |
+| **Allowed: Exceptions** | `Exception`, `ValueError`, etc. | Needed for error handling in REPL code |
+| **Blocked: Code Execution** | `eval`, `exec`, `compile` | Could escape sandbox |
+| **Blocked: User Input** | `input` | Would hang the system |
+| **Blocked: Introspection** | `globals`, `locals` | Could access internal RLM state |
 
 #### 4.4.5 The llm_query Function
 
@@ -738,7 +801,150 @@ for chunk in chunks:
 final_answer = llm_query(f"Combine these results: {results}")
 ```
 
-#### 4.4.6 Code Execution Method
+#### 4.4.5b The FINAL_VAR Function
+
+```python
+def final_var(variable_name: str) -> str:
+    """
+    Return the value of a variable from the REPL environment as a final answer.
+    This function is used by the model to return variables as final answers.
+    """
+    # Strip spaces, quotes, and newlines from variable name
+    variable_name = variable_name.strip().strip('"').strip("'").strip('\n').strip('\r')
+    try:
+        # Check if variable exists in locals
+        if variable_name in self.locals:
+            value = self.locals[variable_name]
+            return str(value)
+        else:
+            return f"Error: Variable '{variable_name}' not found in REPL environment"
+    except Exception as e:
+        return f"Error retrieving variable '{variable_name}': {str(e)}"
+
+self.globals['FINAL_VAR'] = final_var
+```
+
+**Purpose:** Allows the model to return a REPL variable as the final answer.
+
+**Usage Example:**
+
+```python
+# In REPL, the model builds up a result:
+analysis_results = []
+for chunk in chunks:
+    result = llm_query(f"Analyze: {chunk}")
+    analysis_results.append(result)
+final_summary = llm_query(f"Summarize: {analysis_results}")
+```
+
+Then in the response text (not in code):
+```
+FINAL_VAR(final_summary)
+```
+
+The system retrieves `final_summary` from `self.locals` and returns its string value.
+
+#### 4.4.6 Context Loading Method
+
+```python
+def load_context(self, context_json: Optional[dict | list] = None, context_str: Optional[str] = None):
+    # Write context JSON to temporary directory using absolute (temp dir) path
+    if context_json is not None:
+        context_path = os.path.join(self.temp_dir, "context.json")
+        with open(context_path, "w") as f:
+            json.dump(context_json, f, indent=2)
+        context_code = (
+            f"import json\n"
+            f"with open(r'{context_path}', 'r') as f:\n"
+            f"    context = json.load(f)\n"
+        )
+        self.code_execution(context_code)
+    
+    if context_str is not None:
+        context_path = os.path.join(self.temp_dir, "context.txt")
+        with open(context_path, "w") as f:
+            f.write(context_str)
+        context_code = (
+            f"import os\n"
+            f"with open(r'{context_path}', 'r') as f:\n"
+            f"    context = f.read()\n"
+        )
+        self.code_execution(context_code)
+```
+
+**How Context Loading Works:**
+
+| Input Type | File Created | Variable Type |
+|------------|--------------|---------------|
+| `context_json` (dict/list) | `context.json` | Python dict/list |
+| `context_str` (string) | `context.txt` | Python string |
+
+The context is:
+1. Written to a temporary file in `self.temp_dir`
+2. Loaded via generated Python code executed in the REPL
+3. Available as the `context` variable in all subsequent REPL executions
+
+#### 4.4.7 Helper Context Managers
+
+**Output Capture:**
+
+```python
+@contextmanager
+def _capture_output(self):
+    """Thread-safe context manager to capture stdout/stderr"""
+    with self._lock:
+        old_stdout = sys.stdout
+        old_stderr = sys.stderr
+        
+        stdout_buffer = io.StringIO()
+        stderr_buffer = io.StringIO()
+        
+        try:
+            sys.stdout = stdout_buffer
+            sys.stderr = stderr_buffer
+            yield stdout_buffer, stderr_buffer
+        finally:
+            sys.stdout = old_stdout
+            sys.stderr = old_stderr
+```
+
+**Temporary Working Directory:**
+
+```python
+@contextmanager
+def _temp_working_directory(self):
+    """Context manager to temporarily change working directory for REPL execution"""
+    old_cwd = os.getcwd()
+    try:
+        os.chdir(self.temp_dir)
+        yield
+    finally:
+        os.chdir(old_cwd)
+```
+
+**Purpose of These Helpers:**
+
+| Helper | Purpose |
+|--------|---------|
+| `_capture_output` | Redirects `print()` statements to buffers for capture; thread-safe |
+| `_temp_working_directory` | Isolates file operations to temp directory; restores original on exit |
+| `_lock` | Threading lock prevents concurrent execution issues |
+
+#### 4.4.8 Cleanup Method
+
+```python
+def __del__(self):
+    """Clean up temporary directory when object is destroyed"""
+    try:
+        import shutil
+        shutil.rmtree(self.temp_dir)
+    except:
+        pass
+```
+
+**Important:** The destructor removes the temporary directory and all files when the `REPLEnv` object is garbage collected.
+
+#### 4.4.9 Code Execution Method
 
 ```python
 def code_execution(self, code) -> REPLResult:
@@ -1109,49 +1315,164 @@ def convert_context_for_repl(context):
 
 #### 4.8.1 `rlm/logger/root_logger.py` - ColorfulLogger
 
-Provides ANSI-colored console output for the Root LM's activities:
+Provides ANSI-colored console output for the Root LM's activities.
+
+**Complete Class Structure:**
 
 ```python
 class ColorfulLogger:
+    """A colorful logger that tracks RLM client interactions with the model."""
+    
+    # ANSI color codes
     COLORS = {
         'RESET': '\033[0m',
         'BOLD': '\033[1m',
+        'DIM': '\033[2m',
         'RED': '\033[31m',
         'GREEN': '\033[32m',
         'YELLOW': '\033[33m',
         'BLUE': '\033[34m',
-        # ...
+        'MAGENTA': '\033[35m',
+        'CYAN': '\033[36m',
+        'WHITE': '\033[37m',
+        'BG_RED': '\033[41m',
+        'BG_GREEN': '\033[42m',
+        'BG_YELLOW': '\033[43m',
+        'BG_BLUE': '\033[44m',
+        'BG_MAGENTA': '\033[45m',
+        'BG_CYAN': '\033[46m',
     }
+    
+    def __init__(self, enabled: bool = True):
+        self.enabled = enabled
+        self.conversation_step = 0
+        self.last_messages_length = 0
+        self.current_query = ""
+        self.session_start_time = None
+        self.current_depth = 0
 ```
 
-**Methods:**
+**Methods Explained:**
 
-| Method | Purpose |
-|--------|---------|
-| `log_query_start(query)` | Logs the beginning of a new query |
-| `log_initial_messages(messages)` | Shows the system prompt setup |
-| `log_model_response(response, has_tool_calls)` | Shows each LM response |
-| `log_tool_execution(tool_call, result)` | Shows code execution |
-| `log_final_response(response)` | Shows the final answer |
+| Method | Purpose | Output Example |
+|--------|---------|----------------|
+| `log_query_start(query)` | Logs start of new query with timestamp | `═══ STARTING NEW QUERY │ 14:32:15 ═══` |
+| `log_initial_messages(messages)` | Shows system prompt setup | `[1] SYSTEM: You are tasked with...` |
+| `log_model_response(response, has_tool_calls)` | Shows each LM response | `MODEL RESPONSE (Step 1): Let me...` |
+| `log_tool_execution(tool_call, result)` | Shows code execution | `TOOL EXECUTION: Call: CODE_EXECUTION` |
+| `log_final_response(response)` | Shows the final answer | `═══ FINAL RESPONSE ═══` |
+
+**Color Coding Convention:**
+
+| Color | Used For |
+|-------|----------|
+| GREEN | Query start, final response, success indicators |
+| YELLOW | Tool calls, system messages |
+| BLUE | User messages |
+| MAGENTA | Assistant messages |
+| CYAN | Response content, separators |
+| BOLD | Headers and labels |
+| DIM | Timestamps and metadata |
+
+**Truncation Logic:**
+
+```python
+# Content is truncated for readability:
+if len(content) > 2000:
+    content = content[:2000] + "..."  # For initial messages
+
+if len(response) > 500:
+    display_response = response[:500] + "..."  # For model responses
+
+if len(tool_result) > 300:
+    display_result = tool_result[:300] + "..."  # For tool results
+```
 
 #### 4.8.2 `rlm/logger/repl_logger.py` - REPLEnvLogger
 
-Uses the `rich` library for Jupyter-notebook-style output:
+Uses the `rich` library for Jupyter-notebook-style output with syntax highlighting.
+
+**Complete Class Structure:**
 
 ```python
+from rich.console import Console
+from rich.syntax import Syntax
+from rich.panel import Panel
+from rich.text import Text
+from rich import box
+from rich.rule import Rule
+
+@dataclass
+class CodeExecution:
+    code: str
+    stdout: str
+    stderr: str
+    execution_number: int
+    execution_time: Optional[float] = None
+
 class REPLEnvLogger:
     def __init__(self, max_output_length: int = 2000, enabled: bool = True):
-        self.console = Console()  # Rich console
+        self.enabled = enabled
+        self.console = Console()
         self.executions: List[CodeExecution] = []
+        self.execution_count = 0
+        self.max_output_length = max_output_length
 ```
 
-**Features:**
+**Methods Explained:**
 
-- Syntax-highlighted code blocks
-- Colored panels for input/output
-- Error highlighting
-- Execution timing display
-- Truncation for long outputs
+| Method | Purpose |
+|--------|---------|
+| `log_execution(code, stdout, stderr, execution_time)` | Records an execution |
+| `display_last()` | Shows the most recent execution |
+| `display_all()` | Shows all executions in sequence |
+| `_display_single_execution(execution)` | Renders one execution cell |
+| `_truncate_output(text)` | Smart truncation preserving start/end |
+| `clear()` | Resets all logged executions |
+
+**Output Rendering:**
+
+The logger creates Jupyter-notebook-style panels:
+
+```
+╭──────────────────── In [1]: ─────────────────────╮
+│  1 │ chunk = context[:10000]                     │
+│  2 │ result = llm_query(f"Find: {chunk}")        │
+│  3 │ print(result)                               │
+╰──────────────────────────────────────────────────╯
+╭──────────────────── Out [1]: ────────────────────╮
+│ The magic number is 7384921                      │
+╰──────────────────────────────────────────────────╯
+╭──────────────────── Timing [1]: ─────────────────╮
+│ Execution time: 2.3451s                          │
+╰──────────────────────────────────────────────────╯
+```
+
+**Smart Truncation:**
+
+```python
+def _truncate_output(self, text: str) -> str:
+    """Shows first half + ellipsis + last half for long outputs."""
+    if len(text) <= self.max_output_length:
+        return text
+    
+    half_length = self.max_output_length // 2
+    first_part = text[:half_length]
+    last_part = text[-half_length:]
+    truncated_chars = len(text) - self.max_output_length
+    
+    return f"{first_part}\n\n... [TRUNCATED {truncated_chars} characters] ...\n\n{last_part}"
+```
+
+**Panel Styling:**
+
+| Panel Type | Border Color | Title Color |
+|------------|--------------|-------------|
+| Input (code) | Blue | Bold Blue |
+| Output (success) | Green | Bold Green |
+| Output (error) | Red | Bold Red |
+| Timing | Grey | Bold Grey |
+| No output | Dim | Bold Dim |
 
 ---
 
@@ -1474,6 +1795,143 @@ review = rlm.completion(
 
 ---
 
+---
+
+## 8. Environment Setup
+
+### 8.1 Requirements
+
+**File: `requirements.txt`**
+
+```
+openai
+dotenv
+rich
+```
+
+| Package | Purpose | Required? |
+|---------|---------|-----------|
+| `openai` | OpenAI API client for LLM calls | **Yes** |
+| `dotenv` | Load environment variables from `.env` file | **Yes** |
+| `rich` | Jupyter-style REPL logging with syntax highlighting | Optional (for logging only) |
+
+### 8.2 Installation
+
+```bash
+# Using pip
+pip install openai python-dotenv rich
+
+# Using Poetry (recommended per user preferences)
+poetry add openai python-dotenv rich
+
+# Using UV (recommended per user preferences)
+uv add openai python-dotenv rich
+```
+
+### 8.3 Environment Variables
+
+**File: `.env-example`**
+
+```bash
+OPENAI_API_KEY=your-api-key-here
+```
+
+**Setup:**
+
+```bash
+# Copy the example file
+cp .env-example .env
+
+# Edit with your actual API key
+nano .env  # or use your preferred editor
+```
+
+The `dotenv` package automatically loads these when the `OpenAIClient` is initialized:
+
+```python
+from dotenv import load_dotenv
+load_dotenv()  # Loads .env file
+```
+
+### 8.4 Running the Example
+
+```bash
+# Run the needle-in-haystack example
+python main.py
+```
+
+**Expected Output (with logging enabled):**
+
+```
+Example of using RLM (REPL) with GPT-5-nano on a needle-in-haystack problem.
+Generating massive context with 1M lines...
+Magic number inserted at position 512345
+
+================================================================================
+STARTING NEW QUERY | 14:32:15
+================================================================================
+QUERY: I'm looking for a magic number. What is it?
+
+INITIAL MESSAGES SETUP:
+  [1] SYSTEM: You are tasked with answering a query...
+
+MODEL RESPONSE (Step 1):
+  Response: Let me first check the context size...
+  Contains tool calls - will execute them
+
+╭────────────────────── In [1]: ───────────────────────╮
+│  1 │ print(f'Context length: {len(context)}')        │
+╰──────────────────────────────────────────────────────╯
+...
+
+================================================================================
+FINAL RESPONSE:
+================================================================================
+7384921
+================================================================================
+
+Result: 7384921. Expected: 7384921
+```
+
+### 8.5 Extending to Different LLM Providers
+
+The `OpenAIClient` can be replaced with other providers. Key interface:
+
+```python
+class CustomClient:
+    def __init__(self, api_key: str, model: str):
+        # Initialize your client
+        pass
+    
+    def completion(self, messages: list[dict] | str, **kwargs) -> str:
+        # Return string response from LLM
+        pass
+```
+
+**Example: Using with Anthropic:**
+
+```python
+# In rlm/utils/llm.py, add:
+class AnthropicClient:
+    def __init__(self, api_key: str, model: str = "claude-3-opus"):
+        import anthropic
+        self.client = anthropic.Anthropic(api_key=api_key)
+        self.model = model
+    
+    def completion(self, messages: list[dict] | str, **kwargs) -> str:
+        if isinstance(messages, str):
+            messages = [{"role": "user", "content": messages}]
+        
+        response = self.client.messages.create(
+            model=self.model,
+            messages=messages,
+            max_tokens=4096
+        )
+        return response.content[0].text
+```
+
+---
+
 ## Summary
 
 The RLM architecture enables LLMs to:
@@ -1490,8 +1948,56 @@ This implementation provides a minimal but functional version of the RLM concept
 
 ---
 
+## Appendix A: Quick Reference
+
+### A.1 Key Classes
+
+| Class | File | Purpose |
+|-------|------|---------|
+| `RLM` | `rlm/rlm.py` | Abstract base class |
+| `RLM_REPL` | `rlm/rlm_repl.py` | Main implementation |
+| `REPLEnv` | `rlm/repl.py` | Sandboxed execution environment |
+| `Sub_RLM` | `rlm/repl.py` | Simple LM for sub-calls |
+| `OpenAIClient` | `rlm/utils/llm.py` | OpenAI API wrapper |
+| `ColorfulLogger` | `rlm/logger/root_logger.py` | ANSI console logging |
+| `REPLEnvLogger` | `rlm/logger/repl_logger.py` | Rich Jupyter-style logging |
+
+### A.2 Key Functions
+
+| Function | File | Purpose |
+|----------|------|---------|
+| `find_code_blocks(text)` | `rlm/utils/utils.py` | Extract ```` ```repl ```` blocks |
+| `find_final_answer(text)` | `rlm/utils/utils.py` | Detect `FINAL()` or `FINAL_VAR()` |
+| `process_code_execution(...)` | `rlm/utils/utils.py` | Execute code and update messages |
+| `convert_context_for_repl(context)` | `rlm/utils/utils.py` | Convert context to REPL format |
+| `build_system_prompt()` | `rlm/utils/prompts.py` | Build initial system message |
+| `next_action_prompt(query, iteration)` | `rlm/utils/prompts.py` | Build iteration prompt |
+
+### A.3 REPL Environment Variables
+
+| Variable | Type | Description |
+|----------|------|-------------|
+| `context` | str or dict | The loaded context data |
+| `llm_query` | function | Call sub-LM with prompt |
+| `FINAL_VAR` | function | Retrieve variable for final answer |
+| `_stdout` | str | Last execution's stdout |
+| `_stderr` | str | Last execution's stderr |
+
+### A.4 Termination Syntax
+
+```
+# Direct answer:
+FINAL(The answer is 42)
+
+# Variable reference:
+FINAL_VAR(my_result_variable)
+```
+
+---
+
 ## References
 
 - [Original RLM Blogpost by Alex Zhang](https://alexzhang13.github.io/blog/2025/rlm/)
 - [OpenAI API Documentation](https://platform.openai.com/docs)
 - [Python `exec` and `eval` Documentation](https://docs.python.org/3/library/functions.html#exec)
+- [Rich Library Documentation](https://rich.readthedocs.io/)
