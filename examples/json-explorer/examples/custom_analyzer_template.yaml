@@ -1,0 +1,101 @@
+# Custom Analyzer Template
+# ========================
+#
+# Edit this file to create your own analysis.
+# Run with: python analyze.py data.json --custom custom_analyzer_template.yaml
+#
+# TIP: Copy this file and customize for your specific use case.
+
+name: my_custom_analysis
+description: My Custom Analysis
+
+# Add your questions below
+questions:
+  # ─────────────────────────────────────────────────────────────
+  # DISCOVERY: Find patterns, themes, entities
+  # ─────────────────────────────────────────────────────────────
+  
+  - id: main_themes
+    question: What are the main themes, topics, or subjects discussed?
+    description: Theme Discovery
+    category: discovery
+    exhaustive: true
+    priority: 1
+
+  - id: key_entities
+    question: What are the key people, products, or organizations mentioned?
+    description: Key Entities
+    category: discovery
+    priority: 2
+
+  # ─────────────────────────────────────────────────────────────
+  # SENTIMENT: Opinions, emotions, reactions
+  # ─────────────────────────────────────────────────────────────
+  
+  - id: overall_sentiment
+    question: What is the overall sentiment? Is it positive, negative, or mixed? Give examples.
+    description: Overall Sentiment
+    category: sentiment
+    priority: 3
+
+  - id: emotional_peaks
+    question: What topics generated the strongest emotional reactions?
+    description: Emotional Peaks
+    category: sentiment
+    priority: 4
+
+  # ─────────────────────────────────────────────────────────────
+  # QUALITATIVE: Deep understanding, context
+  # ─────────────────────────────────────────────────────────────
+  
+  - id: user_stories
+    question: What personal experiences or stories do people share?
+    description: User Stories
+    category: qualitative
+    priority: 5
+
+  # ─────────────────────────────────────────────────────────────
+  # COMPARISON: How things compare
+  # ─────────────────────────────────────────────────────────────
+  
+  - id: comparisons
+    question: What comparisons do people make? What do they compare to what?
+    description: Comparisons Made
+    category: comparison
+    priority: 6
+
+  # ─────────────────────────────────────────────────────────────
+  # CUSTOM: Your specific questions
+  # ─────────────────────────────────────────────────────────────
+  
+  - id: custom_question_1
+    question: Replace this with your own question
+    description: My Custom Question
+    category: custom
+    priority: 10
+    
+  # Add more questions as needed...
+
+# ─────────────────────────────────────────────────────────────
+# CATEGORY OPTIONS:
+# ─────────────────────────────────────────────────────────────
+#
+#   - sentiment: Opinion, emotion, tone analysis
+#   - discovery: Finding patterns, themes, entities
+#   - quantitative: Counting, measuring, frequencies
+#   - qualitative: Deep understanding, context
+#   - comparison: Comparing things, alternatives
+#   - temporal: Time-based analysis, trends
+#   - custom: Everything else
+#
+# ─────────────────────────────────────────────────────────────
+# TIPS:
+# ─────────────────────────────────────────────────────────────
+#
+# 1. Use "exhaustive: true" when you want EVERY mention found
+# 2. Lower priority numbers run first
+# 3. Questions can reference specific topics, products, etc.
+# 4. The more specific your question, the better the answer
+# 5. Use natural language - ask as if talking to a person
+#
+

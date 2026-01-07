@@ -1,0 +1,18 @@
+{
+  "mcpServers": {
+    "rlm": {
+      "command": "node",
+      "args": ["/Users/chen/Projects/rlm/unified-rlm-mcp/dist/index.js"],
+      "env": {
+        "OPENAI_API_KEY": "${OPENAI_API_KEY}",
+        "RLM_DEBUG": "true",
+        "RLM_MODEL": "gpt-4o-mini",
+        "RLM_SYNTHESIS_MODEL": "gpt-4o",
+        "RLM_MAX_TOKENS": "500000",
+        "RLM_MAX_COST": "10.00",
+        "RLM_MAX_ITERATIONS": "100"
+      }
+    }
+  }
+}
+

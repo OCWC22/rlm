@@ -1,0 +1,84 @@
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+name = "rlm-cli"
+version = "0.1.0"
+description = "Recursive Language Model CLI - Extended context processing for CLI coding agents"
+authors = ["Your Name <you@example.com>"]
+readme = "README.md"
+license = "MIT"
+packages = [
+    { include = "rlm" },
+    { include = "rlm_cli" },
+]
+keywords = [
+    "llm",
+    "ai",
+    "context-extension",
+    "claude-code",
+    "codex",
+    "recursive-language-model",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+
+# Core dependencies
+openai = "^1.0.0"
+python-dotenv = "^1.0.0"
+
+# Optional: Anthropic SDK
+anthropic = { version = "^0.39.0", optional = true }
+
+# Optional: Exa SDK for research
+exa-py = { version = "^1.0.0", optional = true }
+
+# Optional: Rich for colorful logging
+rich = { version = "^13.0.0", optional = true }
+
+# Optional: YAML config support
+pyyaml = { version = "^6.0", optional = true }
+
+[tool.poetry.extras]
+anthropic = ["anthropic"]
+exa = ["exa-py"]
+rich = ["rich"]
+yaml = ["pyyaml"]
+all = ["anthropic", "exa-py", "rich", "pyyaml"]
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.0.0"
+pytest-asyncio = "^0.23.0"
+ruff = "^0.1.0"
+mypy = "^1.8.0"
+
+[tool.poetry.scripts]
+rlm-cli = "rlm_cli.cli:main"
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W"]
+ignore = ["E501"]  # Line too long - handled by formatter
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_ignores = true
+ignore_missing_imports = true
+

@@ -1,0 +1,45 @@
+{
+  "name": "unified-rlm-mcp",
+  "version": "2.1.0",
+  "description": "Unified RLM MCP - Infinite context & reasoning for any model, any use case. Production-ready.",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "unified-rlm-mcp": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx src/index.ts",
+    "start": "node dist/index.js",
+    "test": "node test/test-mcp.js",
+    "test:lfm": "node test/test-lfm2.5.js",
+    "test:qwen": "node test/test-qwen.js",
+    "test:all": "node test/test-all.js",
+    "clean": "rm -rf dist node_modules",
+    "prepublishOnly": "pnpm build"
+  },
+  "keywords": [
+    "mcp",
+    "rlm",
+    "llm",
+    "on-device",
+    "ollama",
+    "recursive-language-model",
+    "externalized-state"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "openai": "^4.0.0",
+    "zod": "^3.22.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
