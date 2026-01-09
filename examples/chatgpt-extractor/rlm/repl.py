@@ -15,17 +15,29 @@ from rlm import RLM
 class Sub_RLM(RLM):
     """Recursive LLM client for REPL environment with fixed configuration."""
     
-    def __init__(self, model: str = "gpt-5"):
-        # Configuration - model can be specified
-        self.api_key = os.getenv("OPENAI_API_KEY")
-        if not self.api_key:
-            raise ValueError("OPENAI_API_KEY environment variable is required")
-        
+    def __init__(self, model: str = "gpt-5", provider: str = "openai", cost_tracker=None):
+        # Configuration - model and provider can be specified
+        self.provider = provider
         self.model = model
-
-        # Initialize OpenAI client
-        from rlm.utils.llm import OpenAIClient
-        self.client = OpenAIClient(api_key=self.api_key, model=model)
+        
+        if provider == "anthropic":
+            self.api_key = os.getenv("ANTHROPIC_API_KEY")
+            if not self.api_key:
+                raise ValueError("ANTHROPIC_API_KEY environment variable is required")
+            from rlm.utils.llm import AnthropicClient
+            # Mark as "sub" call for cost tracking
+            self.client = AnthropicClient(
+                api_key=self.api_key, 
+                model=model,
+                call_type="sub",
+                cost_tracker=cost_tracker
+            )
+        else:
+            self.api_key = os.getenv("OPENAI_API_KEY")
+            if not self.api_key:
+                raise ValueError("OPENAI_API_KEY environment variable is required")
+            from rlm.utils.llm import OpenAIClient
+            self.client = OpenAIClient(api_key=self.api_key, model=model)
         
     
     def completion(self, prompt) -> str:
@@ -75,6 +87,8 @@ class REPLEnv:
         context_json: Optional[dict | list] = None,
         context_str: Optional[str] = None,
         setup_code: str = None,
+        provider: str = "openai",  # "openai" or "anthropic"
+        cost_tracker=None,  # Pass cost tracker for unified tracking
     ):
         # Store the original working directory
         self.original_cwd = os.getcwd()
@@ -84,7 +98,11 @@ class REPLEnv:
 
 
         # Initialize minimal RLM / LM client. Change this to support more depths.
-        self.sub_rlm: RLM = Sub_RLM(model=recursive_model)
+        self.sub_rlm: RLM = Sub_RLM(
+            model=recursive_model, 
+            provider=provider,
+            cost_tracker=cost_tracker
+        )
         
         # Create safe globals with only string-safe built-ins
         self.globals = {

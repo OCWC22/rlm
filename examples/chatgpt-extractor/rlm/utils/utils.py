@@ -25,14 +25,33 @@ def find_final_answer(text: str) -> Optional[Tuple[str, str]]:
     Returns None if neither pattern is found.
     """
     # Check for FINAL_VAR pattern first - must be at start of line
-    final_var_pattern = r'^\s*FINAL_VAR\((.*?)\)'
-    match = re.search(final_var_pattern, text, re.MULTILINE | re.DOTALL)
+    # Use greedy match but stop at closing paren that's at start of line or end
+    final_var_pattern = r'^\s*FINAL_VAR\(([^)]+)\)'
+    match = re.search(final_var_pattern, text, re.MULTILINE)
     if match:
         return ('FINAL_VAR', match.group(1).strip())
     
-    # Check for FINAL pattern - must be at start of line
-    final_pattern = r'^\s*FINAL\((.*?)\)'
-    match = re.search(final_pattern, text, re.MULTILINE | re.DOTALL)
+    # Check for FINAL pattern with multiline content
+    # Match FINAL( then capture everything until we find a closing ) 
+    # that's followed by end of string, newline+non-space, or triple quotes
+    final_pattern = r'^\s*FINAL\(([\s\S]*?)\)(?:\s*$|\n(?=[^\s]))'
+    match = re.search(final_pattern, text, re.MULTILINE)
+    if match:
+        content = match.group(1).strip()
+        # Remove surrounding quotes if present
+        if (content.startswith('"""') and content.endswith('"""')):
+            content = content[3:-3].strip()
+        elif (content.startswith("'''") and content.endswith("'''")):
+            content = content[3:-3].strip()
+        elif (content.startswith('"') and content.endswith('"')):
+            content = content[1:-1].strip()
+        elif (content.startswith("'") and content.endswith("'")):
+            content = content[1:-1].strip()
+        return ('FINAL', content)
+    
+    # Fallback: try simpler pattern for single-line FINAL
+    simple_pattern = r'^\s*FINAL\(([^)]+)\)'
+    match = re.search(simple_pattern, text, re.MULTILINE)
     if match:
         return ('FINAL', match.group(1).strip())
     
@@ -201,8 +220,25 @@ def check_for_final_answer(response: str, repl_env, logger) -> Optional[str]:
                 variable_value = repl_env.locals[variable_name]
                 return str(variable_value)
             else:
-                error_msg = f"Variable '{variable_name}' not found in REPL environment"
+                # Variable not found - try to find similar variables
+                # Common issue: model uses generic name like 'final_answer' but stored as something else
+                available_vars = [k for k in repl_env.locals.keys() 
+                                  if not k.startswith('_') and k not in ('context', 'llm_query', 'FINAL_VAR')]
+                
+                # Try to find the most likely answer variable
+                answer_keywords = ['answer', 'result', 'response', 'final', 'output', 'extraction', 'definition']
+                for keyword in answer_keywords:
+                    for var in available_vars:
+                        if keyword in var.lower():
+                            variable_value = repl_env.locals[var]
+                            if variable_value and len(str(variable_value)) > 50:  # Must have substantial content
+                                logger.log_tool_execution("FINAL_VAR", 
+                                    f"Variable '{variable_name}' not found, using '{var}' instead")
+                                return str(variable_value)
+                
+                error_msg = f"Variable '{variable_name}' not found. Available: {available_vars}"
                 logger.log_tool_execution("FINAL_VAR", error_msg)
+                print(f"⚠️  {error_msg}")
                 return None
         except Exception as e:
             error_msg = f"Error retrieving variable '{variable_name}': {str(e)}"
