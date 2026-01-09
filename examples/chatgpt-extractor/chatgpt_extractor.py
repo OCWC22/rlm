@@ -376,6 +376,57 @@ class ChatGPTFetcher:
             fetched_at=datetime.now().isoformat()
         )
 
+    def from_text(self, text: str, title: str = "ChatGPT Conversation") -> ChatGPTConversation:
+        """Load a conversation from raw text (copy-pasted)."""
+        print(f"\n Loading from text input...")
+
+        messages = []
+
+        # Try to parse common copy-paste formats
+        # Format 1: "You said:" / "ChatGPT said:"
+        # Format 2: "User:" / "Assistant:"
+        # Format 3: Just alternating blocks
+
+        patterns = [
+            (r'(?:You said:|User:)\s*(.*?)(?=(?:ChatGPT said:|Assistant:|You said:|User:|$))', 'user'),
+            (r'(?:ChatGPT said:|Assistant:)\s*(.*?)(?=(?:You said:|User:|ChatGPT said:|Assistant:|$))', 'assistant'),
+        ]
+
+        for pattern, role in patterns:
+            matches = re.findall(pattern, text, re.DOTALL | re.IGNORECASE)
+            for match in matches:
+                content = match.strip()
+                if content and len(content) > 5:
+                    messages.append(ChatMessage(
+                        role=role,
+                        content=content,
+                        index=len(messages) + 1
+                    ))
+
+        # If no structured format found, try to split by double newlines
+        if not messages:
+            blocks = re.split(r'\n\n+', text)
+            for i, block in enumerate(blocks):
+                block = block.strip()
+                if block and len(block) > 10:
+                    # Alternate between user and assistant
+                    role = 'user' if i % 2 == 0 else 'assistant'
+                    messages.append(ChatMessage(
+                        role=role,
+                        content=block,
+                        index=len(messages) + 1
+                    ))
+
+        print(f"   Title: {title}")
+        print(f"   Messages: {len(messages)}")
+
+        return ChatGPTConversation(
+            url="text://manual-input",
+            title=title,
+            messages=messages,
+            fetched_at=datetime.now().isoformat()
+        )
+
     def from_json(self, json_path: str) -> ChatGPTConversation:
         """Load a conversation from a JSON file (ChatGPT export format)."""
         print(f"\n Loading from JSON: {json_path}")
@@ -872,13 +923,7 @@ Models available:
 
     args = parser.parse_args()
 
-    # Check API key
-    if not os.getenv("ANTHROPIC_API_KEY"):
-        print(" ERROR: ANTHROPIC_API_KEY not set!")
-        print("   Run: export ANTHROPIC_API_KEY='sk-ant-...'")
-        sys.exit(1)
-
-    # Fetch the conversation
+    # Fetch the conversation first (doesn't need API key)
     fetcher = ChatGPTFetcher()
 
     if args.json:
@@ -909,6 +954,12 @@ Models available:
 
         files = output.save(result)
         return
+
+    # Check API key (only needed for RLM extraction)
+    if not os.getenv("ANTHROPIC_API_KEY"):
+        print(" ERROR: ANTHROPIC_API_KEY not set!")
+        print("   Run: export ANTHROPIC_API_KEY='sk-ant-...'")
+        sys.exit(1)
 
     # Extract with RLM
     extractor = ConversationExtractor(
